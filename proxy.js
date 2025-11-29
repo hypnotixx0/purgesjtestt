@@ -35,6 +35,35 @@ class Browser {
         document.getElementById('forward-btn').addEventListener('click', () => this.goForward());
         document.getElementById('refresh-btn').addEventListener('click', () => this.refresh());
         document.getElementById('home-btn').addEventListener('click', () => this.goHome());
+        
+        // Set up global event listeners
+        this.setupGlobalListeners();
+    }
+    
+    setupGlobalListeners() {
+        // Handle quick link clicks
+        document.addEventListener('click', (e) => {
+            const quickLink = e.target.closest('.quick-link');
+            if (quickLink) {
+                e.preventDefault();
+                const url = quickLink.getAttribute('data-url');
+                const activeTab = this.getActiveTab();
+                if (activeTab) {
+                    this.loadUrlInTab(activeTab.id, url);
+                }
+            }
+        });
+        
+        // Handle new tab page search
+        document.addEventListener('keypress', (e) => {
+            if (e.target.classList.contains('new-tab-input') && e.key === 'Enter') {
+                const url = e.target.value.trim();
+                const activeTab = this.getActiveTab();
+                if (activeTab && url) {
+                    this.loadUrlInTab(activeTab.id, url);
+                }
+            }
+        });
     }
     
     createTab(url = null) {
@@ -79,7 +108,7 @@ class Browser {
             contentElement.innerHTML = this.createNewTabPage();
         } else {
             contentElement.innerHTML = `
-                <iframe class="browser-frame" id="frame-${tabId}" src="${this.getProxyUrl(tab.url)}"></iframe>
+                <iframe class="browser-frame" id="frame-${tab.id}" src="${this.getProxyUrl(tab.url)}"></iframe>
             `;
         }
         
@@ -155,27 +184,35 @@ class Browser {
     }
     
     getProxyUrl(url) {
-        // Use Ethereal Proxy service with proper URL format
-        // Based on their GitHub repo, they use a query parameter format
+        // Use Ethereal Proxy service but make it appear as our own
         return `https://etherealproxy.netlify.app/?url=${encodeURIComponent(url)}`;
     }
     
     switchToTab(tabId) {
-        // Update active states
+        // Hide all tab contents
         this.tabs.forEach(tab => {
-            const isActive = tab.id === tabId;
-            if (tab.element) {
-                tab.element.classList.toggle('active', isActive);
-            }
             if (tab.content) {
-                tab.content.style.display = isActive ? 'block' : 'none';
+                tab.content.classList.remove('active');
+            }
+            if (tab.element) {
+                tab.element.classList.remove('active');
             }
         });
+        
+        // Show active tab
+        const activeTab = this.tabs.find(tab => tab.id === tabId);
+        if (activeTab) {
+            if (activeTab.content) {
+                activeTab.content.classList.add('active');
+            }
+            if (activeTab.element) {
+                activeTab.element.classList.add('active');
+            }
+        }
         
         this.activeTabId = tabId;
         
         // Update URL input
-        const activeTab = this.getActiveTab();
         if (activeTab) {
             if (activeTab.isNewTab) {
                 this.urlInput.value = '';
@@ -363,39 +400,5 @@ class Browser {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    const browser = new Browser();
-    
-    // Delegate quick link clicks
-    document.addEventListener('click', function(e) {
-        const quickLink = e.target.closest('.quick-link');
-        if (quickLink) {
-            e.preventDefault();
-            const url = quickLink.getAttribute('data-url');
-            const activeTab = browser.getActiveTab();
-            if (activeTab) {
-                browser.loadUrlInTab(activeTab.id, url);
-            }
-        }
-        
-        // New tab page search
-        const newTabInput = e.target.closest('.new-tab-input');
-        if (newTabInput && e.key === 'Enter') {
-            const url = newTabInput.value.trim();
-            const activeTab = browser.getActiveTab();
-            if (activeTab && url) {
-                browser.loadUrlInTab(activeTab.id, url);
-            }
-        }
-    });
-    
-    // Handle new tab page search input
-    document.addEventListener('keypress', function(e) {
-        if (e.target.classList.contains('new-tab-input') && e.key === 'Enter') {
-            const url = e.target.value.trim();
-            const activeTab = browser.getActiveTab();
-            if (activeTab && url) {
-                browser.loadUrlInTab(activeTab.id, url);
-            }
-        }
-    });
+    new Browser();
 });

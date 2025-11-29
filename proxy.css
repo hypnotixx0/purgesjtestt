@@ -218,14 +218,28 @@ body {
     background: var(--primary-dark);
 }
 
-/* Content Area */
+/* Content Area - FIXED FOR FULL SCREEN */
 .content-area {
     flex: 1;
     position: relative;
     overflow: hidden;
+    background: var(--black);
 }
 
-/* Browser Frame */
+/* Browser Frame - FIXED FOR FULL SCREEN */
+.browser-frame-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.browser-frame-container.active {
+    display: block;
+}
+
 .browser-frame {
     width: 100%;
     height: 100%;
