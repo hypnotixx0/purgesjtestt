@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/Purge Proxy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --black: #0a0a0a;
+            --dark: #111113;
+            --gray: #1f1f23;
+            --light-gray: #2a2a30;
+            --white: #f8fafc;
+            --text: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+                var(--dark, #111113);
+            z-index: -2;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 10, 10, 0.9);
+            border-bottom: 1px solid var(--light-gray);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .proxy-section {
+            background: var(--dark);
+            border: 1px solid var(--light-gray);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* URL Input */
+        .url-input-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 1rem;
+            background: var(--black);
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: var(--white);
+            border: 1px solid var(--light-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+        }
+
+        /* Tabs System */
+        .tabs-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            background: var(--black);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px 8px 0 0;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--gray);
+        }
+
+        .tab-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .add-tab {
+            background: var(--gray);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+        }
+
+        .add-tab:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Embed Container */
+        .embed-container {
+            width: 100%;
+            height: 70vh;
+            border: 1px solid var(--light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--black);
+        }
+
+        .embed-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .quick-link {
+            background: var(--dark);
+            border: 1px solid var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .quick-link:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .quick-link i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .quick-link-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-link-desc {
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-btn {
+            background: var(--gray);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .control-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--light-gray);
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .url-input-container {
+                flex-direction: column;
+            }
+            
+            .embed-container {
+                height: 60vh;
+            }
+            
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-header {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="background"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">/Purge Proxy</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="games.html" class="nav-link"><i class="fas fa-gamepad"></i> Games</a>
+            <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="proxy-section">
+            <h2 class="section-title"><i class="fas fa-globe"></i> Web Proxy</h2>
+            
+            <!-- Tabs System -->
+            <div class="tabs-container">
+                <div class="tabs-header" id="tabs-header">
+                    <!-- Tabs will be generated here -->
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="control-btn" id="back-btn" title="Back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="control-btn" id="forward-btn" title="Forward">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="control-btn" id="refresh-btn" title="Refresh">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="control-btn" id="home-btn" title="Home">
+                        <i class="fas fa-home"></i>
+                    </button>
+                </div>
+                
+                <!-- URL Input -->
+                <div class="url-input-container">
+                    <input type="text" id="url-input" class="url-input" placeholder="Enter website URL (e.g., https://google.com)">
+                    <button id="load-btn" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> Go
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Content -->
+            <div class="tab-content active" id="tab-content-1">
+                <div class="embed-container">
+                    <embed id="proxy-frame-1" class="embed-frame" src="about:blank">
+                </div>
+            </div>
+        </div>
+        
+        <div class="proxy-section">
+            <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Access</h2>
+            
+            <div class="quick-links">
+                <a href="#" class="quick-link" data-url="https://google.com">
+                    <i class="fab fa-google"></i>
+                    <div class="quick-link-title">Google</div>
+                    <div class="quick-link-desc">Search engine</div>
+                </a>
+                
+                <a href="#" class="quick-link" data-url="https://github.com">
+                    <i class="fab fa-github"></i>
+                    <div class="quick-link-title">GitHub</div>
+                    <div class="quick-link-desc">Code repository</div>
+                </a>
+                
+                <a href="#" class="quick-link" data-url="https://youtube.com">
+                    <i class="fab fa-youtube"></i>
+                    <div class="quick-link-title">YouTube</div>
+                    <div class="quick-link-desc">Video platform</div>
+                </a>
+                
+                <a href="#" class="quick-link" data-url="https://wikipedia.org">
+                    <i class="fab fa-wikipedia-w"></i>
+                    <div class="quick-link-title">Wikipedia</div>
+                    <div class="quick-link-desc">Online encyclopedia</div>
+                </a>
+                
+                <a href="#" class="quick-link" data-url="https://reddit.com">
+                    <i class="fab fa-reddit"></i>
+                    <div class="quick-link-title">Reddit</div>
+                    <div class="quick-link-desc">Social platform</div>
+                </a>
+                
+                <a href="#" class="quick-link" data-url="https://discord.com">
+                    <i class="fab fa-discord"></i>
+                    <div class="quick-link-title">Discord</div>
+                    <div class="quick-link-desc">Communication</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 /Purge. Anyone posing as this site that isnt unhiin is false.</p>
+    </footer>
+
+    <script>
+        // Tab Management System
+        class TabManager {
+            constructor() {
+                this.tabs = [];
+                this.activeTabId = null;
+                this.nextTabId = 1;
+                this.tabsHeader = document.getElementById('tabs-header');
+                
+                this.init();
+            }
+            
+            init() {
+                // Create first tab
+                this.createTab('New Tab', 'https://google.com');
+                
+                // Add event listeners
+                document.getElementById('add-tab-btn').addEventListener('click', () => {
+                    this.createTab('New Tab', 'https://google.com');
+                });
+            }
+            
+            createTab(title, url) {
+                const tabId = this.nextTabId++;
+                const tab = {
+                    id: tabId,
+                    title: title,
+                    url: url,
+                    element: null,
+                    content: null
+                };
+                
+                this.tabs.push(tab);
+                this.renderTab(tab);
+                this.switchToTab(tabId);
+                
+                return tab;
+            }
+            
+            renderTab(tab) {
+                // Create tab element
+                const tabElement = document.createElement('div');
+                tabElement.className = 'tab';
+                tabElement.setAttribute('data-tab-id', tab.id);
+                tabElement.innerHTML = `
+                    <i class="fas fa-globe"></i>
+                    <span class="tab-title">${tab.title}</span>
+                    <button class="tab-close"><i class="fas fa-times"></i></button>
+                `;
+                
+                // Create content area
+                const contentElement = document.createElement('div');
+                contentElement.className = 'tab-content';
+                contentElement.id = `tab-content-${tab.id}`;
+                contentElement.innerHTML = `
+                    <div class="embed-container">
+                        <embed id="proxy-frame-${tab.id}" class="embed-frame" src="about:blank">
+                    </div>
+                `;
+                
+                // Insert before add tab button
+                this.tabsHeader.insertBefore(tabElement, document.getElementById('add-tab-btn'));
+                document.querySelector('.proxy-section').insertBefore(contentElement, document.querySelector('.proxy-section').lastElementChild);
+                
+                // Add event listeners
+                tabElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.tab-close')) {
+                        this.switchToTab(tab.id);
+                    }
+                });
+                
+                tabElement.querySelector('.tab-close').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.closeTab(tab.id);
+                });
+                
+                tab.element = tabElement;
+                tab.content = contentElement;
+                
+                // Load initial URL
+                this.loadUrlInTab(tab.id, tab.url);
+            }
+            
+            switchToTab(tabId) {
+                // Update active states
+                this.tabs.forEach(tab => {
+                    const isActive = tab.id === tabId;
+                    tab.element.classList.toggle('active', isActive);
+                    tab.content.classList.toggle('active', isActive);
+                });
+                
+                this.activeTabId = tabId;
+                
+                // Update URL input
+                const activeTab = this.getActiveTab();
+                if (activeTab) {
+                    document.getElementById('url-input').value = activeTab.url;
+                }
+            }
+            
+            closeTab(tabId) {
+                if (this.tabs.length <= 1) return; // Don't close the last tab
+            
+                const tabIndex = this.tabs.findIndex(tab => tab.id === tabId);
+                if (tabIndex === -1) return;
+                
+                const tab = this.tabs[tabIndex];
+                
+                // Remove elements
+                tab.element.remove();
+                tab.content.remove();
+                
+                // Remove from array
+                this.tabs.splice(tabIndex, 1);
+                
+                // Switch to another tab if needed
+                if (this.activeTabId === tabId) {
+                    const newActiveTab = this.tabs[Math.max(0, tabIndex - 1)];
+                    this.switchToTab(newActiveTab.id);
+                }
+            }
+            
+            getActiveTab() {
+                return this.tabs.find(tab => tab.id === this.activeTabId);
+            }
+            
+            loadUrlInTab(tabId, url) {
+                const tab = this.tabs.find(tab => tab.id === tabId);
+                if (!tab) return;
+                
+                if (!url) return;
+                
+                // Add protocol if missing
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                
+                // Encode URL for proxy
+                const encodedUrl = encodeURIComponent(url);
+                const proxyUrl = `https://luunar.org/scramjet/${encodedUrl}`;
+                
+                // Update tab
+                tab.url = url;
+                tab.title = this.extractDomain(url);
+                
+                // Update UI
+                if (tab.element) {
+                    tab.element.querySelector('.tab-title').textContent = tab.title;
+                }
+                
+                // Load in embed
+                const frame = document.getElementById(`proxy-frame-${tabId}`);
+                if (frame) {
+                    frame.src = proxyUrl;
+                }
+                
+                // Update input if this is the active tab
+                if (this.activeTabId === tabId) {
+                    document.getElementById('url-input').value = url;
+                }
+            }
+            
+            extractDomain(url) {
+                try {
+                    const domain = new URL(url).hostname;
+                    return domain.replace('www.', '');
+                } catch {
+                    return 'New Tab';
+                }
+            }
+            
+            // Navigation controls
+            goBack() {
+                // Note: Embed elements have limited navigation control
+                // This would need to be handled differently for full functionality
+                console.log('Back navigation requested');
+            }
+            
+            goForward() {
+                console.log('Forward navigation requested');
+            }
+            
+            refresh() {
+                const activeTab = this.getActiveTab();
+                if (activeTab) {
+                    this.loadUrlInTab(activeTab.id, activeTab.url);
+                }
+            }
+            
+            goHome() {
+                const activeTab = this.getActiveTab();
+                if (activeTab) {
+                    this.loadUrlInTab(activeTab.id, 'https://google.com');
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create Add Tab button
+            const addTabBtn = document.createElement('div');
+            addTabBtn.className = 'add-tab';
+            addTabBtn.id = 'add-tab-btn';
+            addTabBtn.innerHTML = '<i class="fas fa-plus"></i>';
+            document.getElementById('tabs-header').appendChild(addTabBtn);
+            
+            // Initialize tab manager
+            const tabManager = new TabManager();
+            
+            const urlInput = document.getElementById('url-input');
+            const loadBtn = document.getElementById('load-btn');
+            const quickLinks = document.querySelectorAll('.quick-link');
+            
+            // Load button click
+            loadBtn.addEventListener('click', function() {
+                const url = urlInput.value.trim();
+                const activeTab = tabManager.getActiveTab();
+                if (activeTab) {
+                    tabManager.loadUrlInTab(activeTab.id, url);
+                }
+            });
+            
+            // Enter key in input
+            urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const url = urlInput.value.trim();
+                    const activeTab = tabManager.getActiveTab();
+                    if (activeTab) {
+                        tabManager.loadUrlInTab(activeTab.id, url);
+                    }
+                }
+            });
+            
+            // Quick links
+            quickLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    const activeTab = tabManager.getActiveTab();
+                    if (activeTab) {
+                        tabManager.loadUrlInTab(activeTab.id, url);
+                    }
+                });
+            });
+            
+            // Navigation controls
+            document.getElementById('back-btn').addEventListener('click', () => tabManager.goBack());
+            document.getElementById('forward-btn').addEventListener('click', () => tabManager.goForward());
+            document.getElementById('refresh-btn').addEventListener('click', () => tabManager.refresh());
+            document.getElementById('home-btn').addEventListener('click', () => tabManager.goHome());
+        });
+    </script>
+</body>
+</html>
