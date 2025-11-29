@@ -47,76 +47,153 @@
             z-index: -2;
         }
 
-        /* Header */
-        .header {
-            background: rgba(10, 10, 10, 0.9);
-            border-bottom: 1px solid var(--light-gray);
-            padding: 1rem 2rem;
+        /* Browser Container */
+        .browser-container {
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
+            flex-direction: column;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-link {
-            color: var(--text);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .proxy-section {
+        /* Tabs Bar */
+        .tabs-bar {
             background: var(--dark);
-            border: 1px solid var(--light-gray);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* URL Input */
-        .url-input-container {
+            border-bottom: 1px solid var(--light-gray);
+            padding: 0.5rem 1rem;
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab {
+            background: var(--black);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px 8px 0 0;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            min-width: 150px;
+            max-width: 250px;
+            position: relative;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--gray);
+        }
+
+        .tab-favicon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .add-tab {
+            background: var(--gray);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+        }
+
+        .add-tab:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: var(--dark);
+            border-bottom: 1px solid var(--light-gray);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .nav-btn {
+            background: var(--gray);
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:disabled:hover {
+            background: var(--gray);
+            border-color: var(--light-gray);
+            color: var(--text);
+        }
+
+        .url-container {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
         }
 
         .url-input {
             flex: 1;
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             background: var(--black);
             border: 2px solid var(--light-gray);
             border-radius: 12px;
@@ -131,10 +208,12 @@
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
-        .btn {
-            padding: 1rem 1.5rem;
+        .go-btn {
+            background: var(--primary);
             border: none;
             border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            color: var(--white);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -143,127 +222,81 @@
             gap: 0.5rem;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
+        .go-btn:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
         }
 
-        .btn-secondary {
-            background: var(--gray);
-            color: var(--white);
-            border: 1px solid var(--light-gray);
-        }
-
-        .btn-secondary:hover {
-            background: var(--light-gray);
-        }
-
-        /* Tabs System */
-        .tabs-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .tabs-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .tab {
-            background: var(--black);
-            border: 1px solid var(--light-gray);
-            border-radius: 8px 8px 0 0;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-            min-width: 120px;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .tab:hover:not(.active) {
-            background: var(--gray);
-        }
-
-        .tab-close {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: inherit;
-            cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .tab-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .add-tab {
-            background: var(--gray);
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-        }
-
-        .add-tab:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Embed Container */
-        .embed-container {
-            width: 100%;
-            height: 70vh;
-            border: 1px solid var(--light-gray);
-            border-radius: 12px;
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            position: relative;
             overflow: hidden;
-            background: var(--black);
         }
 
-        .embed-frame {
+        /* Browser Frame */
+        .browser-frame {
             width: 100%;
             height: 100%;
             border: none;
+            background: var(--black);
         }
 
-        /* Quick Links */
+        /* New Tab Page */
+        .new-tab-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .new-tab-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .new-tab-search {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem 0;
+        }
+
+        .new-tab-input {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: var(--dark);
+            border: 2px solid var(--light-gray);
+            border-radius: 16px;
+            color: var(--white);
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .new-tab-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
         .quick-links {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 800px;
             margin-top: 2rem;
         }
 
@@ -286,8 +319,8 @@
         }
 
         .quick-link i {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
             color: var(--primary);
         }
 
@@ -301,73 +334,65 @@
             color: var(--text);
         }
 
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+        /* Loading Indicator */
+        .loading-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
 
-        .control-btn {
-            background: var(--gray);
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
+        .loading-indicator.loading {
+            animation: loadingProgress 2s ease-in-out infinite;
         }
 
-        .control-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: var(--white);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--light-gray);
-            margin-top: 2rem;
+        @keyframes loadingProgress {
+            0% { transform: scaleX(0); }
+            50% { transform: scaleX(1); }
+            100% { transform: scaleX(0); transform-origin: right; }
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .container {
-                padding: 1rem;
-            }
-            
-            .url-input-container {
-                flex-direction: column;
-            }
-            
-            .embed-container {
-                height: 60vh;
-            }
-            
-            .quick-links {
-                grid-template-columns: 1fr;
-            }
-            
-            .tabs-header {
-                flex-wrap: wrap;
+            .tabs-bar {
+                padding: 0.5rem;
             }
             
             .tab {
-                min-width: 100px;
-                padding: 0.5rem 1rem;
+                min-width: 120px;
+                max-width: 180px;
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .nav-bar {
+                padding: 0.5rem;
+            }
+            
+            .url-container {
+                flex-direction: column;
+            }
+            
+            .new-tab-logo {
+                font-size: 3rem;
+            }
+            
+            .new-tab-input {
+                padding: 1rem 1.5rem;
+            }
+            
+            .quick-links {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+            
+            .quick-link {
+                padding: 1rem;
             }
         }
     </style>
@@ -376,138 +401,98 @@
     <!-- Background -->
     <div class="background"></div>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">/Purge Proxy</div>
-        <div class="nav-links">
-            <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="games.html" class="nav-link"><i class="fas fa-gamepad"></i> Games</a>
-            <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+    <!-- Browser Container -->
+    <div class="browser-container">
+        <!-- Tabs Bar -->
+        <div class="tabs-bar" id="tabs-bar">
+            <!-- Tabs will be generated here -->
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="proxy-section">
-            <h2 class="section-title"><i class="fas fa-globe"></i> Web Proxy</h2>
-            
-            <!-- Tabs System -->
-            <div class="tabs-container">
-                <div class="tabs-header" id="tabs-header">
-                    <!-- Tabs will be generated here -->
-                </div>
-                
-                <!-- Controls -->
-                <div class="controls">
-                    <button class="control-btn" id="back-btn" title="Back">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button class="control-btn" id="forward-btn" title="Forward">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                    <button class="control-btn" id="refresh-btn" title="Refresh">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                    <button class="control-btn" id="home-btn" title="Home">
-                        <i class="fas fa-home"></i>
-                    </button>
-                </div>
-                
-                <!-- URL Input -->
-                <div class="url-input-container">
-                    <input type="text" id="url-input" class="url-input" placeholder="Enter website URL (e.g., https://google.com)">
-                    <button id="load-btn" class="btn btn-primary">
-                        <i class="fas fa-arrow-right"></i> Go
-                    </button>
-                </div>
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-controls">
+                <button class="nav-btn" id="back-btn" title="Back" disabled>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="nav-btn" id="forward-btn" title="Forward" disabled>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="nav-btn" id="refresh-btn" title="Refresh">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="nav-btn" id="home-btn" title="Home">
+                    <i class="fas fa-home"></i>
+                </button>
             </div>
-            
-            <!-- Tab Content -->
-            <div class="tab-content active" id="tab-content-1">
-                <div class="embed-container">
-                    <embed id="proxy-frame-1" class="embed-frame" src="about:blank">
-                </div>
+
+            <div class="url-container">
+                <input type="text" id="url-input" class="url-input" placeholder="Search or enter website name">
+                <button id="go-btn" class="go-btn">
+                    <i class="fas fa-arrow-right"></i> Go
+                </button>
             </div>
         </div>
-        
-        <div class="proxy-section">
-            <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Access</h2>
-            
-            <div class="quick-links">
-                <a href="#" class="quick-link" data-url="https://google.com">
-                    <i class="fab fa-google"></i>
-                    <div class="quick-link-title">Google</div>
-                    <div class="quick-link-desc">Search engine</div>
-                </a>
-                
-                <a href="#" class="quick-link" data-url="https://github.com">
-                    <i class="fab fa-github"></i>
-                    <div class="quick-link-title">GitHub</div>
-                    <div class="quick-link-desc">Code repository</div>
-                </a>
-                
-                <a href="#" class="quick-link" data-url="https://youtube.com">
-                    <i class="fab fa-youtube"></i>
-                    <div class="quick-link-title">YouTube</div>
-                    <div class="quick-link-desc">Video platform</div>
-                </a>
-                
-                <a href="#" class="quick-link" data-url="https://wikipedia.org">
-                    <i class="fab fa-wikipedia-w"></i>
-                    <div class="quick-link-title">Wikipedia</div>
-                    <div class="quick-link-desc">Online encyclopedia</div>
-                </a>
-                
-                <a href="#" class="quick-link" data-url="https://reddit.com">
-                    <i class="fab fa-reddit"></i>
-                    <div class="quick-link-title">Reddit</div>
-                    <div class="quick-link-desc">Social platform</div>
-                </a>
-                
-                <a href="#" class="quick-link" data-url="https://discord.com">
-                    <i class="fab fa-discord"></i>
-                    <div class="quick-link-title">Discord</div>
-                    <div class="quick-link-desc">Communication</div>
-                </a>
-            </div>
+
+        <!-- Loading Indicator -->
+        <div class="loading-indicator" id="loading-indicator"></div>
+
+        <!-- Content Area -->
+        <div class="content-area" id="content-area">
+            <!-- Content will be loaded here -->
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 /Purge. Anyone posing as this site that isnt unhiin is false.</p>
-    </footer>
-
     <script>
-        // Tab Management System
-        class TabManager {
+        // Browser Tab Management System
+        class Browser {
             constructor() {
                 this.tabs = [];
                 this.activeTabId = null;
                 this.nextTabId = 1;
-                this.tabsHeader = document.getElementById('tabs-header');
+                this.tabsBar = document.getElementById('tabs-bar');
+                this.contentArea = document.getElementById('content-area');
+                this.urlInput = document.getElementById('url-input');
+                this.loadingIndicator = document.getElementById('loading-indicator');
                 
                 this.init();
             }
             
             init() {
+                // Create Add Tab button
+                const addTabBtn = document.createElement('div');
+                addTabBtn.className = 'add-tab';
+                addTabBtn.id = 'add-tab-btn';
+                addTabBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                addTabBtn.addEventListener('click', () => this.createTab());
+                this.tabsBar.appendChild(addTabBtn);
+                
                 // Create first tab
-                this.createTab('New Tab', 'https://google.com');
+                this.createTab();
                 
                 // Add event listeners
-                document.getElementById('add-tab-btn').addEventListener('click', () => {
-                    this.createTab('New Tab', 'https://google.com');
+                document.getElementById('go-btn').addEventListener('click', () => this.navigate());
+                this.urlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.navigate();
                 });
+                
+                // Navigation controls
+                document.getElementById('back-btn').addEventListener('click', () => this.goBack());
+                document.getElementById('forward-btn').addEventListener('click', () => this.goForward());
+                document.getElementById('refresh-btn').addEventListener('click', () => this.refresh());
+                document.getElementById('home-btn').addEventListener('click', () => this.goHome());
             }
             
-            createTab(title, url) {
+            createTab(url = null) {
                 const tabId = this.nextTabId++;
                 const tab = {
                     id: tabId,
-                    title: title,
+                    title: 'New Tab',
                     url: url,
                     element: null,
-                    content: null
+                    content: null,
+                    history: [],
+                    historyIndex: -1,
+                    isNewTab: !url
                 };
                 
                 this.tabs.push(tab);
@@ -523,24 +508,29 @@
                 tabElement.className = 'tab';
                 tabElement.setAttribute('data-tab-id', tab.id);
                 tabElement.innerHTML = `
-                    <i class="fas fa-globe"></i>
-                    <span class="tab-title">${tab.title}</span>
+                    <div class="tab-favicon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="tab-title">${tab.title}</div>
                     <button class="tab-close"><i class="fas fa-times"></i></button>
                 `;
                 
                 // Create content area
                 const contentElement = document.createElement('div');
-                contentElement.className = 'tab-content';
+                contentElement.className = 'browser-frame-container';
                 contentElement.id = `tab-content-${tab.id}`;
-                contentElement.innerHTML = `
-                    <div class="embed-container">
-                        <embed id="proxy-frame-${tab.id}" class="embed-frame" src="about:blank">
-                    </div>
-                `;
+                
+                if (tab.isNewTab) {
+                    contentElement.innerHTML = this.createNewTabPage();
+                } else {
+                    contentElement.innerHTML = `
+                        <iframe class="browser-frame" id="frame-${tab.id}" src="about:blank"></iframe>
+                    `;
+                }
                 
                 // Insert before add tab button
-                this.tabsHeader.insertBefore(tabElement, document.getElementById('add-tab-btn'));
-                document.querySelector('.proxy-section').insertBefore(contentElement, document.querySelector('.proxy-section').lastElementChild);
+                this.tabsBar.insertBefore(tabElement, document.getElementById('add-tab-btn'));
+                this.contentArea.appendChild(contentElement);
                 
                 // Add event listeners
                 tabElement.addEventListener('click', (e) => {
@@ -557,16 +547,73 @@
                 tab.element = tabElement;
                 tab.content = contentElement;
                 
-                // Load initial URL
-                this.loadUrlInTab(tab.id, tab.url);
+                // Load initial URL if provided
+                if (tab.url) {
+                    this.loadUrlInTab(tab.id, tab.url);
+                }
+            }
+            
+            createNewTabPage() {
+                return `
+                    <div class="new-tab-page">
+                        <div class="new-tab-logo">/Purge</div>
+                        <p style="color: var(--text); margin-bottom: 2rem; font-size: 1.2rem;">Secure Web Proxy</p>
+                        
+                        <div class="new-tab-search">
+                            <input type="text" class="new-tab-input" placeholder="Search Google or enter website address">
+                        </div>
+                        
+                        <div class="quick-links">
+                            <div class="quick-link" data-url="https://google.com">
+                                <i class="fab fa-google"></i>
+                                <div class="quick-link-title">Google</div>
+                                <div class="quick-link-desc">Search</div>
+                            </div>
+                            
+                            <div class="quick-link" data-url="https://youtube.com">
+                                <i class="fab fa-youtube"></i>
+                                <div class="quick-link-title">YouTube</div>
+                                <div class="quick-link-desc">Videos</div>
+                            </div>
+                            
+                            <div class="quick-link" data-url="https://github.com">
+                                <i class="fab fa-github"></i>
+                                <div class="quick-link-title">GitHub</div>
+                                <div class="quick-link-desc">Code</div>
+                            </div>
+                            
+                            <div class="quick-link" data-url="https://wikipedia.org">
+                                <i class="fab fa-wikipedia-w"></i>
+                                <div class="quick-link-title">Wikipedia</div>
+                                <div class="quick-link-desc">Encyclopedia</div>
+                            </div>
+                            
+                            <div class="quick-link" data-url="https://reddit.com">
+                                <i class="fab fa-reddit"></i>
+                                <div class="quick-link-title">Reddit</div>
+                                <div class="quick-link-desc">Community</div>
+                            </div>
+                            
+                            <div class="quick-link" data-url="https://discord.com">
+                                <i class="fab fa-discord"></i>
+                                <div class="quick-link-title">Discord</div>
+                                <div class="quick-link-desc">Chat</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
             
             switchToTab(tabId) {
                 // Update active states
                 this.tabs.forEach(tab => {
                     const isActive = tab.id === tabId;
-                    tab.element.classList.toggle('active', isActive);
-                    tab.content.classList.toggle('active', isActive);
+                    if (tab.element) {
+                        tab.element.classList.toggle('active', isActive);
+                    }
+                    if (tab.content) {
+                        tab.content.style.display = isActive ? 'block' : 'none';
+                    }
                 });
                 
                 this.activeTabId = tabId;
@@ -574,8 +621,17 @@
                 // Update URL input
                 const activeTab = this.getActiveTab();
                 if (activeTab) {
-                    document.getElementById('url-input').value = activeTab.url;
+                    if (activeTab.isNewTab) {
+                        this.urlInput.value = '';
+                        this.urlInput.placeholder = "Search or enter website name";
+                    } else {
+                        this.urlInput.value = activeTab.url;
+                        this.urlInput.placeholder = "Enter website URL";
+                    }
                 }
+                
+                // Update navigation buttons
+                this.updateNavButtons();
             }
             
             closeTab(tabId) {
@@ -587,8 +643,8 @@
                 const tab = this.tabs[tabIndex];
                 
                 // Remove elements
-                tab.element.remove();
-                tab.content.remove();
+                if (tab.element) tab.element.remove();
+                if (tab.content) tab.content.remove();
                 
                 // Remove from array
                 this.tabs.splice(tabIndex, 1);
@@ -604,15 +660,32 @@
                 return this.tabs.find(tab => tab.id === this.activeTabId);
             }
             
+            navigate() {
+                const url = this.urlInput.value.trim();
+                const activeTab = this.getActiveTab();
+                if (activeTab && url) {
+                    this.loadUrlInTab(activeTab.id, url);
+                }
+            }
+            
             loadUrlInTab(tabId, url) {
                 const tab = this.tabs.find(tab => tab.id === tabId);
                 if (!tab) return;
                 
                 if (!url) return;
                 
-                // Add protocol if missing
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                // Show loading
+                this.showLoading();
+                
+                // Add protocol if missing and not a search query
+                if (!url.startsWith('http://') && !url.startsWith('https://') && !url.includes(' ')) {
                     url = 'https://' + url;
+                }
+                
+                // Handle search queries
+                if (url.includes(' ')) {
+                    const searchQuery = encodeURIComponent(url);
+                    url = `https://google.com/search?q=${searchQuery}`;
                 }
                 
                 // Encode URL for proxy
@@ -622,47 +695,78 @@
                 // Update tab
                 tab.url = url;
                 tab.title = this.extractDomain(url);
+                tab.isNewTab = false;
                 
                 // Update UI
                 if (tab.element) {
                     tab.element.querySelector('.tab-title').textContent = tab.title;
                 }
                 
-                // Load in embed
-                const frame = document.getElementById(`proxy-frame-${tabId}`);
-                if (frame) {
-                    frame.src = proxyUrl;
+                // Replace new tab page with iframe if needed
+                if (tab.content.querySelector('.new-tab-page')) {
+                    tab.content.innerHTML = `<iframe class="browser-frame" id="frame-${tabId}" src="${proxyUrl}"></iframe>`;
+                } else {
+                    // Update existing iframe
+                    const frame = document.getElementById(`frame-${tabId}`);
+                    if (frame) {
+                        frame.src = proxyUrl;
+                    }
                 }
                 
-                // Update input if this is the active tab
-                if (this.activeTabId === tabId) {
-                    document.getElementById('url-input').value = url;
-                }
+                // Update input
+                this.urlInput.value = url;
+                
+                // Add to history
+                tab.history = tab.history.slice(0, tab.historyIndex + 1);
+                tab.history.push(url);
+                tab.historyIndex = tab.history.length - 1;
+                
+                // Update navigation buttons
+                this.updateNavButtons();
+                
+                // Hide loading after a delay
+                setTimeout(() => this.hideLoading(), 1000);
             }
             
             extractDomain(url) {
                 try {
                     const domain = new URL(url).hostname;
-                    return domain.replace('www.', '');
+                    return domain.replace('www.', '').substring(0, 20) + (domain.length > 20 ? '...' : '');
                 } catch {
                     return 'New Tab';
                 }
             }
             
+            showLoading() {
+                this.loadingIndicator.classList.add('loading');
+            }
+            
+            hideLoading() {
+                this.loadingIndicator.classList.remove('loading');
+            }
+            
             // Navigation controls
             goBack() {
-                // Note: Embed elements have limited navigation control
-                // This would need to be handled differently for full functionality
-                console.log('Back navigation requested');
+                const activeTab = this.getActiveTab();
+                if (activeTab && activeTab.historyIndex > 0) {
+                    activeTab.historyIndex--;
+                    const url = activeTab.history[activeTab.historyIndex];
+                    this.loadUrlInTab(activeTab.id, url);
+                }
             }
             
             goForward() {
-                console.log('Forward navigation requested');
+                const activeTab = this.getActiveTab();
+                if (activeTab && activeTab.historyIndex < activeTab.history.length - 1) {
+                    activeTab.historyIndex++;
+                    const url = activeTab.history[activeTab.historyIndex];
+                    this.loadUrlInTab(activeTab.id, url);
+                }
             }
             
             refresh() {
                 const activeTab = this.getActiveTab();
-                if (activeTab) {
+                if (activeTab && activeTab.url) {
                     this.loadUrlInTab(activeTab.id, activeTab.url);
                 }
             }
@@ -670,64 +774,46 @@
             goHome() {
                 const activeTab = this.getActiveTab();
                 if (activeTab) {
-                    this.loadUrlInTab(activeTab.id, 'https://google.com');
+                    // Create a new tab for home instead of replacing current
+                    this.createTab('https://google.com');
+                }
+            }
+            
+            updateNavButtons() {
+                const activeTab = this.getActiveTab();
+                if (activeTab) {
+                    document.getElementById('back-btn').disabled = activeTab.historyIndex <= 0;
+                    document.getElementById('forward-btn').disabled = activeTab.historyIndex >= activeTab.history.length - 1;
                 }
             }
         }
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Create Add Tab button
-            const addTabBtn = document.createElement('div');
-            addTabBtn.className = 'add-tab';
-            addTabBtn.id = 'add-tab-btn';
-            addTabBtn.innerHTML = '<i class="fas fa-plus"></i>';
-            document.getElementById('tabs-header').appendChild(addTabBtn);
+            const browser = new Browser();
             
-            // Initialize tab manager
-            const tabManager = new TabManager();
-            
-            const urlInput = document.getElementById('url-input');
-            const loadBtn = document.getElementById('load-btn');
-            const quickLinks = document.querySelectorAll('.quick-link');
-            
-            // Load button click
-            loadBtn.addEventListener('click', function() {
-                const url = urlInput.value.trim();
-                const activeTab = tabManager.getActiveTab();
-                if (activeTab) {
-                    tabManager.loadUrlInTab(activeTab.id, url);
-                }
-            });
-            
-            // Enter key in input
-            urlInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const url = urlInput.value.trim();
-                    const activeTab = tabManager.getActiveTab();
-                    if (activeTab) {
-                        tabManager.loadUrlInTab(activeTab.id, url);
-                    }
-                }
-            });
-            
-            // Quick links
-            quickLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+            // Delegate quick link clicks
+            document.addEventListener('click', function(e) {
+                const quickLink = e.target.closest('.quick-link');
+                if (quickLink) {
                     e.preventDefault();
-                    const url = this.getAttribute('data-url');
-                    const activeTab = tabManager.getActiveTab();
+                    const url = quickLink.getAttribute('data-url');
+                    const activeTab = browser.getActiveTab();
                     if (activeTab) {
-                        tabManager.loadUrlInTab(activeTab.id, url);
+                        browser.loadUrlInTab(activeTab.id, url);
                     }
-                });
+                }
+                
+                // New tab page search
+                const newTabInput = e.target.closest('.new-tab-input');
+                if (newTabInput && e.key === 'Enter') {
+                    const url = newTabInput.value.trim();
+                    const activeTab = browser.getActiveTab();
+                    if (activeTab && url) {
+                        browser.loadUrlInTab(activeTab.id, url);
+                    }
+                }
             });
-            
-            // Navigation controls
-            document.getElementById('back-btn').addEventListener('click', () => tabManager.goBack());
-            document.getElementById('forward-btn').addEventListener('click', () => tabManager.goForward());
-            document.getElementById('refresh-btn').addEventListener('click', () => tabManager.refresh());
-            document.getElementById('home-btn').addEventListener('click', () => tabManager.goHome());
         });
     </script>
 </body>
