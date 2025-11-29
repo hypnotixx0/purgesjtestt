@@ -1,0 +1,401 @@
+// Browser Tab Management System
+class Browser {
+    constructor() {
+        this.tabs = [];
+        this.activeTabId = null;
+        this.nextTabId = 1;
+        this.tabsBar = document.getElementById('tabs-bar');
+        this.contentArea = document.getElementById('content-area');
+        this.urlInput = document.getElementById('url-input');
+        this.loadingIndicator = document.getElementById('loading-indicator');
+        
+        this.init();
+    }
+    
+    init() {
+        // Create Add Tab button
+        const addTabBtn = document.createElement('div');
+        addTabBtn.className = 'add-tab';
+        addTabBtn.id = 'add-tab-btn';
+        addTabBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        addTabBtn.addEventListener('click', () => this.createTab());
+        this.tabsBar.appendChild(addTabBtn);
+        
+        // Create first tab
+        this.createTab();
+        
+        // Add event listeners
+        document.getElementById('go-btn').addEventListener('click', () => this.navigate());
+        this.urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.navigate();
+        });
+        
+        // Navigation controls
+        document.getElementById('back-btn').addEventListener('click', () => this.goBack());
+        document.getElementById('forward-btn').addEventListener('click', () => this.goForward());
+        document.getElementById('refresh-btn').addEventListener('click', () => this.refresh());
+        document.getElementById('home-btn').addEventListener('click', () => this.goHome());
+    }
+    
+    createTab(url = null) {
+        const tabId = this.nextTabId++;
+        const tab = {
+            id: tabId,
+            title: 'New Tab',
+            url: url,
+            element: null,
+            content: null,
+            history: [],
+            historyIndex: -1,
+            isNewTab: !url
+        };
+        
+        this.tabs.push(tab);
+        this.renderTab(tab);
+        this.switchToTab(tabId);
+        
+        return tab;
+    }
+    
+    renderTab(tab) {
+        // Create tab element
+        const tabElement = document.createElement('div');
+        tabElement.className = 'tab';
+        tabElement.setAttribute('data-tab-id', tab.id);
+        tabElement.innerHTML = `
+            <div class="tab-favicon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="tab-title">${tab.title}</div>
+            <button class="tab-close"><i class="fas fa-times"></i></button>
+        `;
+        
+        // Create content area
+        const contentElement = document.createElement('div');
+        contentElement.className = 'browser-frame-container';
+        contentElement.id = `tab-content-${tab.id}`;
+        
+        if (tab.isNewTab) {
+            contentElement.innerHTML = this.createNewTabPage();
+        } else {
+            contentElement.innerHTML = `
+                <iframe class="browser-frame" id="frame-${tabId}" src="${this.getProxyUrl(tab.url)}"></iframe>
+            `;
+        }
+        
+        // Insert before add tab button
+        this.tabsBar.insertBefore(tabElement, document.getElementById('add-tab-btn'));
+        this.contentArea.appendChild(contentElement);
+        
+        // Add event listeners
+        tabElement.addEventListener('click', (e) => {
+            if (!e.target.closest('.tab-close')) {
+                this.switchToTab(tab.id);
+            }
+        });
+        
+        tabElement.querySelector('.tab-close').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeTab(tab.id);
+        });
+        
+        tab.element = tabElement;
+        tab.content = contentElement;
+    }
+    
+    createNewTabPage() {
+        return `
+            <div class="new-tab-page">
+                <div class="new-tab-logo">/Purge</div>
+                <p style="color: var(--text); margin-bottom: 2rem; font-size: 1.2rem;">Secure Web Proxy</p>
+                
+                <div class="new-tab-search">
+                    <input type="text" class="new-tab-input" placeholder="Search Google or enter website address">
+                </div>
+                
+                <div class="quick-links">
+                    <div class="quick-link" data-url="https://google.com">
+                        <i class="fab fa-google"></i>
+                        <div class="quick-link-title">Google</div>
+                        <div class="quick-link-desc">Search</div>
+                    </div>
+                    
+                    <div class="quick-link" data-url="https://youtube.com">
+                        <i class="fab fa-youtube"></i>
+                        <div class="quick-link-title">YouTube</div>
+                        <div class="quick-link-desc">Videos</div>
+                    </div>
+                    
+                    <div class="quick-link" data-url="https://github.com">
+                        <i class="fab fa-github"></i>
+                        <div class="quick-link-title">GitHub</div>
+                        <div class="quick-link-desc">Code</div>
+                    </div>
+                    
+                    <div class="quick-link" data-url="https://wikipedia.org">
+                        <i class="fab fa-wikipedia-w"></i>
+                        <div class="quick-link-title">Wikipedia</div>
+                        <div class="quick-link-desc">Encyclopedia</div>
+                    </div>
+                    
+                    <div class="quick-link" data-url="https://reddit.com">
+                        <i class="fab fa-reddit"></i>
+                        <div class="quick-link-title">Reddit</div>
+                        <div class="quick-link-desc">Community</div>
+                    </div>
+                    
+                    <div class="quick-link" data-url="https://discord.com">
+                        <i class="fab fa-discord"></i>
+                        <div class="quick-link-title">Discord</div>
+                        <div class="quick-link-desc">Chat</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    getProxyUrl(url) {
+        // Use Ethereal Proxy service with proper URL format
+        // Based on their GitHub repo, they use a query parameter format
+        return `https://etherealproxy.netlify.app/?url=${encodeURIComponent(url)}`;
+    }
+    
+    switchToTab(tabId) {
+        // Update active states
+        this.tabs.forEach(tab => {
+            const isActive = tab.id === tabId;
+            if (tab.element) {
+                tab.element.classList.toggle('active', isActive);
+            }
+            if (tab.content) {
+                tab.content.style.display = isActive ? 'block' : 'none';
+            }
+        });
+        
+        this.activeTabId = tabId;
+        
+        // Update URL input
+        const activeTab = this.getActiveTab();
+        if (activeTab) {
+            if (activeTab.isNewTab) {
+                this.urlInput.value = '';
+                this.urlInput.placeholder = "Search or enter website name";
+            } else {
+                this.urlInput.value = activeTab.url;
+                this.urlInput.placeholder = "Enter website URL";
+            }
+        }
+        
+        // Update navigation buttons
+        this.updateNavButtons();
+    }
+    
+    closeTab(tabId) {
+        if (this.tabs.length <= 1) return; // Don't close the last tab
+    
+        const tabIndex = this.tabs.findIndex(tab => tab.id === tabId);
+        if (tabIndex === -1) return;
+        
+        const tab = this.tabs[tabIndex];
+        
+        // Remove elements
+        if (tab.element) tab.element.remove();
+        if (tab.content) tab.content.remove();
+        
+        // Remove from array
+        this.tabs.splice(tabIndex, 1);
+        
+        // Switch to another tab if needed
+        if (this.activeTabId === tabId) {
+            const newActiveTab = this.tabs[Math.max(0, tabIndex - 1)];
+            this.switchToTab(newActiveTab.id);
+        }
+    }
+    
+    getActiveTab() {
+        return this.tabs.find(tab => tab.id === this.activeTabId);
+    }
+    
+    navigate() {
+        const url = this.urlInput.value.trim();
+        const activeTab = this.getActiveTab();
+        if (activeTab && url) {
+            this.loadUrlInTab(activeTab.id, url);
+        }
+    }
+    
+    loadUrlInTab(tabId, url) {
+        const tab = this.tabs.find(tab => tab.id === tabId);
+        if (!tab) return;
+        
+        if (!url) return;
+        
+        // Show loading
+        this.showLoading();
+        
+        // Add protocol if missing and not a search query
+        if (!url.startsWith('http://') && !url.startsWith('https://') && !url.includes(' ')) {
+            url = 'https://' + url;
+        }
+        
+        // Handle search queries
+        if (url.includes(' ')) {
+            const searchQuery = encodeURIComponent(url);
+            url = `https://google.com/search?q=${searchQuery}`;
+        }
+        
+        // Update tab
+        tab.url = url;
+        tab.title = this.extractDomain(url);
+        tab.isNewTab = false;
+        
+        // Update UI
+        if (tab.element) {
+            tab.element.querySelector('.tab-title').textContent = tab.title;
+        }
+        
+        // Replace new tab page with iframe if needed
+        if (tab.content.querySelector('.new-tab-page')) {
+            tab.content.innerHTML = `<iframe class="browser-frame" id="frame-${tabId}" src="${this.getProxyUrl(url)}"></iframe>`;
+        } else {
+            // Update existing iframe
+            const frame = document.getElementById(`frame-${tabId}`);
+            if (frame) {
+                frame.src = this.getProxyUrl(url);
+            }
+        }
+        
+        // Update input
+        this.urlInput.value = url;
+        
+        // Add to history
+        tab.history = tab.history.slice(0, tab.historyIndex + 1);
+        tab.history.push(url);
+        tab.historyIndex = tab.history.length - 1;
+        
+        // Update navigation buttons
+        this.updateNavButtons();
+        
+        // Hide loading after a delay
+        setTimeout(() => this.hideLoading(), 1000);
+    }
+    
+    extractDomain(url) {
+        try {
+            const domain = new URL(url).hostname;
+            return domain.replace('www.', '').substring(0, 20) + (domain.length > 20 ? '...' : '');
+        } catch {
+            return 'New Tab';
+        }
+    }
+    
+    showLoading() {
+        this.loadingIndicator.classList.add('loading');
+    }
+    
+    hideLoading() {
+        this.loadingIndicator.classList.remove('loading');
+    }
+    
+    // Navigation controls
+    goBack() {
+        const activeTab = this.getActiveTab();
+        if (activeTab && activeTab.historyIndex > 0) {
+            activeTab.historyIndex--;
+            const url = activeTab.history[activeTab.historyIndex];
+            this.loadUrlInTab(activeTab.id, url);
+        }
+    }
+    
+    goForward() {
+        const activeTab = this.getActiveTab();
+        if (activeTab && activeTab.historyIndex < activeTab.history.length - 1) {
+            activeTab.historyIndex++;
+            const url = activeTab.history[activeTab.historyIndex];
+            this.loadUrlInTab(activeTab.id, url);
+        }
+    }
+    
+    refresh() {
+        const activeTab = this.getActiveTab();
+        if (activeTab && activeTab.url) {
+            this.loadUrlInTab(activeTab.id, activeTab.url);
+        }
+    }
+    
+    goHome() {
+        const activeTab = this.getActiveTab();
+        if (activeTab) {
+            // Return to new tab page
+            activeTab.url = null;
+            activeTab.title = 'New Tab';
+            activeTab.isNewTab = true;
+            
+            // Update UI
+            if (activeTab.element) {
+                activeTab.element.querySelector('.tab-title').textContent = 'New Tab';
+            }
+            
+            // Replace iframe with new tab page
+            activeTab.content.innerHTML = this.createNewTabPage();
+            
+            // Update input
+            this.urlInput.value = '';
+            this.urlInput.placeholder = "Search or enter website name";
+            
+            // Clear history for this tab
+            activeTab.history = [];
+            activeTab.historyIndex = -1;
+            
+            // Update navigation buttons
+            this.updateNavButtons();
+        }
+    }
+    
+    updateNavButtons() {
+        const activeTab = this.getActiveTab();
+        if (activeTab) {
+            document.getElementById('back-btn').disabled = activeTab.historyIndex <= 0;
+            document.getElementById('forward-btn').disabled = activeTab.historyIndex >= activeTab.history.length - 1;
+        }
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const browser = new Browser();
+    
+    // Delegate quick link clicks
+    document.addEventListener('click', function(e) {
+        const quickLink = e.target.closest('.quick-link');
+        if (quickLink) {
+            e.preventDefault();
+            const url = quickLink.getAttribute('data-url');
+            const activeTab = browser.getActiveTab();
+            if (activeTab) {
+                browser.loadUrlInTab(activeTab.id, url);
+            }
+        }
+        
+        // New tab page search
+        const newTabInput = e.target.closest('.new-tab-input');
+        if (newTabInput && e.key === 'Enter') {
+            const url = newTabInput.value.trim();
+            const activeTab = browser.getActiveTab();
+            if (activeTab && url) {
+                browser.loadUrlInTab(activeTab.id, url);
+            }
+        }
+    });
+    
+    // Handle new tab page search input
+    document.addEventListener('keypress', function(e) {
+        if (e.target.classList.contains('new-tab-input') && e.key === 'Enter') {
+            const url = e.target.value.trim();
+            const activeTab = browser.getActiveTab();
+            if (activeTab && url) {
+                browser.loadUrlInTab(activeTab.id, url);
+            }
+        }
+    });
+});
